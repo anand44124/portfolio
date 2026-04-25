@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anand Kumar — Vibe Coder</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red:#E24B4A;--red-dark:#A32D2D;--red-mid:#c94140;
+  --red-glow:rgba(226,75,74,0.08);--red-glow2:rgba(226,75,74,0.15);
+  --bg:#080808;--bg2:#0f0f0f;--bg3:#161616;--bg4:#1c1c1c;
+  --line:rgba(226,75,74,0.15);--line2:rgba(226,75,74,0.25);
+  --text:#ececec;--muted:#555;--muted2:#888;
+  --mono:'Share Tech Mono',monospace;--display:'Syne',sans-serif;
+  --green:#4ade80;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);overflow-x:hidden;cursor:none;}
+
+/* CUSTOM CURSOR */
+#cursor{position:fixed;width:10px;height:10px;background:var(--red);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.1s,width 0.2s,height 0.2s,opacity 0.2s;mix-blend-mode:difference;}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1px solid var(--red);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform 0.15s,width 0.2s,height 0.2s,opacity 0.3s;opacity:0.5;}
+body:hover #cursor{opacity:1;}
+
+/* SCANLINES */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:998;}
+
+/* NOISE TEXTURE */
+body::after{content:'';position:fixed;inset:0;opacity:0.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");pointer-events:none;z-index:997;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2.5rem;border-bottom:1px solid var(--line);background:rgba(8,8,8,0.97);backdrop-filter:blur(12px);position:sticky;top:0;z-index:500;}
+.nav-logo{font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--red);letter-spacing:-0.03em;}
+.nav-logo span{color:var(--text);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{color:var(--muted2);text-decoration:none;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;transition:color 0.2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:var(--red);transition:width 0.3s;}
+.nav-links a:hover{color:var(--red);}
+.nav-links a:hover::after{width:100%;}
+.nav-status{display:flex;align-items:center;gap:7px;font-size:0.63rem;color:var(--muted2);}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* HERO */
+.hero{padding:6rem 2.5rem 5rem;max-width:960px;margin:0 auto;position:relative;}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);opacity:0.4;pointer-events:none;}
+.hero-tag{font-size:0.63rem;color:var(--red);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px;animation:fadeUp 0.8s ease both;}
+.hero-tag::before{content:'';width:28px;height:1px;background:var(--red);}
+.hero h1{font-family:var(--display);font-size:clamp(3.2rem,9vw,6.5rem);font-weight:800;line-height:0.92;letter-spacing:-0.05em;margin-bottom:2rem;animation:fadeUp 0.8s 0.1s ease both;}
+.hero h1 .name{color:var(--text);display:block;}
+.hero h1 .title{color:var(--red);display:block;position:relative;}
+.hero-desc{font-size:0.83rem;color:var(--muted2);max-width:520px;line-height:2;margin-bottom:2rem;animation:fadeUp 0.8s 0.2s ease both;}
+.hero-desc .c{color:var(--red);}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:3rem;animation:fadeUp 0.8s 0.3s ease both;}
+.badge{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);border:1px solid var(--line2);padding:5px 12px;background:var(--red-glow);transition:background 0.2s,border-color 0.2s;}
+.badge:hover{background:var(--red-glow2);border-color:var(--red);}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp 0.8s 0.4s ease both;}
+.btn-primary{background:var(--red);color:#fff;border:none;padding:0.85rem 2rem;font-family:var(--mono);font-size:0.73rem;letter-spacing:0.12em;text-transform:uppercase;cursor:none;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;position:relative;overflow:hidden;}
+.btn-primary::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.1);transform:translateX(-100%);transition:transform 0.3s;}
+.btn-primary:hover::before{transform:translateX(0);}
+.btn-primary:hover{background:var(--red-mid);transform:translateY(-2px);box-shadow:0 8px 24px rgba(226,75,74,0.3);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--line2);padding:0.85rem 2rem;font-family:var(--mono);font-size:0.73rem;letter-spacing:0.12em;text-transform:uppercase;cursor:none;transition:border-color 0.2s,color 0.2s,background 0.2s;}
+.btn-ghost:hover{border-color:var(--red);color:var(--red);background:var(--red-glow);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* DIVIDER */
+hr.div{border:none;border-top:1px solid var(--line);margin:0 2.5rem;}
+
+/* SECTION */
+section{max-width:960px;margin:0 auto;padding:4rem 2.5rem;}
+.section-label{font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--red);margin-bottom:2.5rem;display:flex;align-items:center;gap:12px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--line);}
+.section-num{color:var(--muted);font-size:0.55rem;}
+
+/* TERMINAL */
+.terminal{border:1px solid var(--line2);background:var(--bg2);overflow:hidden;}
+.terminal-header{display:flex;align-items:center;gap:7px;padding:0.8rem 1.2rem;border-bottom:1px solid var(--line);background:var(--bg3);}
+.tdot{width:9px;height:9px;border-radius:50%;}
+.tr{background:#ff5f57;}.ty{background:#febc2e;}.tg{background:#28c840;}
+.tname{font-size:0.62rem;color:var(--muted2);margin-left:8px;flex:1;text-align:center;}
+.terminal-body{padding:1.75rem;font-size:0.78rem;line-height:2.15;}
+.tp{color:var(--red);}.tc{color:#f0f0f0;}.to{color:var(--muted2);}
+.tk{color:#E24B4A;}.tv{color:#97C459;}.ts{color:#FAC775;}.tcom{color:#444;}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--red);animation:blink 1s step-end infinite;vertical-align:middle;margin-left:3px;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line2);}
+.skill-item{background:var(--bg2);padding:1.4rem 1.1rem;font-size:0.73rem;color:var(--muted2);transition:background 0.25s,color 0.25s;cursor:none;position:relative;overflow:hidden;}
+.skill-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--red);transform:scaleY(0);transform-origin:bottom;transition:transform 0.25s;}
+.skill-item::after{content:'';position:absolute;inset:0;background:var(--red-glow2);opacity:0;transition:opacity 0.25s;}
+.skill-item:hover{color:var(--text);}
+.skill-item:hover::before{transform:scaleY(1);}
+.skill-item:hover::after{opacity:1;}
+.skill-name{position:relative;z-index:1;font-size:0.75rem;margin-bottom:6px;}
+.skill-lvl{font-size:0.6rem;color:var(--red);position:relative;z-index:1;letter-spacing:2px;}
+.skill-note{font-size:0.58rem;color:var(--green);margin-top:3px;position:relative;z-index:1;}
+.skill-bar{height:1px;background:var(--line);margin-top:8px;position:relative;z-index:1;}
+.skill-bar-fill{height:100%;background:var(--red);transition:width 1.2s ease;}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line2);}
+.project-card{background:var(--bg2);padding:2rem;transition:background 0.25s;position:relative;overflow:hidden;cursor:none;}
+.project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.project-card:hover{background:var(--bg3);}
+.project-card:hover::before{transform:scaleX(1);}
+.project-num{font-size:0.6rem;color:var(--red);letter-spacing:0.15em;margin-bottom:0.9rem;font-family:var(--mono);}
+.project-name{font-family:var(--display);font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:0.6rem;line-height:1.2;}
+.project-desc{font-size:0.73rem;color:var(--muted2);line-height:1.8;margin-bottom:1.2rem;}
+.tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);border:1px solid var(--line);padding:3px 9px;transition:background 0.2s,border-color 0.2s;}
+.tag:hover{background:var(--red-glow);border-color:var(--red);}
+
+/* GREHANI */
+.grehani-card{border:1px solid var(--red);background:var(--bg2);padding:2.5rem;position:relative;overflow:hidden;}
+.grehani-card::before{content:'GREHANI';position:absolute;right:-20px;top:50%;transform:translateY(-50%) rotate(90deg);font-family:var(--display);font-size:5rem;font-weight:800;color:rgba(226,75,74,0.04);letter-spacing:-0.05em;pointer-events:none;white-space:nowrap;}
+.wip-live{display:flex;align-items:center;gap:8px;margin-bottom:1rem;}
+.wip-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+.wip-live-txt{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--green);}
+.grehani-title{font-family:var(--display);font-size:2.2rem;font-weight:800;color:var(--red);margin-bottom:0.3rem;letter-spacing:-0.04em;}
+.grehani-sub{font-size:0.72rem;color:var(--muted2);margin-bottom:1.5rem;letter-spacing:0.05em;}
+.grehani-desc{font-size:0.8rem;color:var(--muted2);line-height:2;max-width:580px;margin-bottom:2rem;}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:2rem;}
+.feat-item{background:var(--bg3);padding:1.1rem 1.2rem;transition:background 0.2s;}
+.feat-item:hover{background:var(--bg4);}
+.feat-icon{font-size:1rem;margin-bottom:6px;}
+.feat-name{font-size:0.73rem;color:var(--text);margin-bottom:3px;font-weight:500;}
+.feat-desc{font-size:0.63rem;color:var(--muted2);line-height:1.6;}
+.progress-wrap{margin-top:1.5rem;}
+.progress-bar{height:1px;background:var(--bg4);border:1px solid var(--line);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--red-dark),var(--red));width:0;transition:width 2s ease;}
+.progress-fill.animated{width:20%;}
+.progress-label{display:flex;justify-content:space-between;font-size:0.62rem;color:var(--muted2);margin-top:8px;}
+.progress-pct{color:var(--red);}
+.grehani-cta{margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap;}
+
+/* IDEAS */
+.ideas-list{list-style:none;}
+.idea-item{display:flex;align-items:flex-start;gap:1.2rem;padding:1.5rem 0;border-bottom:1px solid var(--line);transition:padding-left 0.2s;}
+.idea-item:first-child{border-top:1px solid var(--line);}
+.idea-item:hover{padding-left:8px;}
+.idea-num{font-size:0.6rem;color:var(--red);padding-top:4px;min-width:36px;letter-spacing:0.05em;}
+.idea-title{font-family:var(--display);font-size:0.98rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+.idea-desc{font-size:0.73rem;color:var(--muted2);line-height:1.8;}
+.idea-status{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;margin-top:6px;display:inline-block;padding:2px 8px;border:1px solid;}
+.status-active{color:var(--green);border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.05);}
+.status-concept{color:#FAC775;border-color:rgba(250,199,117,0.3);background:rgba(250,199,117,0.05);}
+.status-learning{color:var(--red);border-color:var(--line);background:var(--red-glow);}
+
+/* CONTACT */
+.contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line2);margin-bottom:2rem;}
+.contact-card{background:var(--bg2);padding:1.75rem;transition:background 0.25s;position:relative;overflow:hidden;}
+.contact-card:hover{background:var(--bg3);}
+.contact-label{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;}
+.contact-value{font-size:0.85rem;color:var(--text);word-break:break-all;}
+.contact-value a{color:var(--text);text-decoration:none;transition:color 0.2s;}
+.contact-value a:hover{color:var(--red);}
+.contact-note{font-size:0.65rem;color:var(--muted2);margin-top:5px;line-height:1.5;}
+.contact-actions{display:flex;gap:1rem;flex-wrap:wrap;}
+
+/* COPY TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--bg3);border:1px solid var(--red);color:var(--text);padding:0.75rem 1.5rem;font-family:var(--mono);font-size:0.72rem;letter-spacing:0.05em;z-index:9000;transform:translateY(100px);opacity:0;transition:transform 0.3s,opacity 0.3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:1.75rem 2.5rem;display:flex;justify-content:space-between;align-items:center;font-size:0.62rem;color:var(--muted2);letter-spacing:0.08em;flex-wrap:wrap;gap:1rem;}
+.footer-red{color:var(--red);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{color:var(--muted2);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--red);}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ACTIVE NAV */
+.nav-links a.active{color:var(--red);}
+.nav-links a.active::after{width:100%;}
+
+@media(max-width:640px){
+  .projects-grid,.contact-wrap,.feat-grid{grid-template-columns:1fr;}
+  .hero h1{font-size:2.8rem;}
+  nav{padding:1rem 1.2rem;}
+  .nav-links{gap:1rem;}
+  section{padding:3rem 1.2rem;}
+  hr.div{margin:0 1.2rem;}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="toast" id="toast"></div>
+
+<nav id="navbar">
+  <div class="nav-logo">ANAND<span>.dev</span></div>
+  <ul class="nav-links">
+    <li><a href="#about" class="nav-link">about</a></li>
+    <li><a href="#skills" class="nav-link">skills</a></li>
+    <li><a href="#work" class="nav-link">work</a></li>
+    <li><a href="#grehani" class="nav-link">grehani</a></li>
+    <li><a href="#ideas" class="nav-link">ideas</a></li>
+    <li><a href="#contact" class="nav-link">contact</a></li>
+  </ul>
+  <div class="nav-status"><div class="dot-live"></div>open to collab</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="about">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-tag">anand_kumar · portfolio_v2 · 2025</div>
+  <h1>
+    <span class="name">Anand Kumar</span>
+    <span class="title">Vibe Coder.</span>
+  </h1>
+  <p class="hero-desc">
+    <span class="c">// </span>B.Tech CSE student at Amity University, Gwalior — building real-life tech solutions beyond just coding on paper. I use AI as a superpower to ship ideas fast and turn concepts into actual products.
+  </p>
+  <div class="hero-badges">
+    <span class="badge">B.Tech CSE · 2nd Sem</span>
+    <span class="badge">Amity University, Gwalior</span>
+    <span class="badge">AI-first builder</span>
+    <span class="badge">Vibe coder</span>
+  </div>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="smoothTo('grehani')">See GrehaNi ↓</button>
+    <button class="btn-ghost" onclick="smoothTo('contact')">Get In Touch →</button>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ABOUT TERMINAL -->
+<section class="reveal">
+  <div class="section-label"><span class="section-num">00 /</span> whoami</div>
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="tdot tr"></div><div class="tdot ty"></div><div class="tdot tg"></div>
+      <span class="tname">anand@amity-gwalior ~ zsh</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="tp">$ </span><span class="tc">cat profile.json</span></div>
+      <div class="to tcom">&nbsp;<span style="color:#333">// loading Anand Kumar...</span></div>
+      <div class="to">{</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"name"</span>: <span class="ts">"Anand Kumar"</span>,</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"university"</span>: <span class="ts">"Amity University, Gwalior"</span>,</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"degree"</span>: <span class="ts">"B.Tech CSE (2nd Semester)"</span>,</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"location"</span>: <span class="ts">"Gwalior, Madhya Pradesh, IN"</span>,</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"superpower"</span>: <span class="ts">"Vibe coding with AI"</span>,</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"currently_building"</span>: <span class="ts">"GrehaNi — AI home assistant"</span>,</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"languages"</span>: {<span class="tk">"strong"</span>:<span class="ts">"C"</span>, <span class="tk">"learning"</span>:<span class="ts">"C++"</span>},</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"also_learning"</span>: [<span class="ts">"App Dev"</span>, <span class="ts">"IoT"</span>, <span class="ts">"Embedded Systems"</span>],</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"seeking"</span>: [<span class="ts">"mentorship"</span>, <span class="ts">"collaborators"</span>, <span class="ts">"real problems to solve"</span>],</div>
+      <div class="to">&nbsp;&nbsp;<span class="tk">"email"</span>: <span class="ts">"anand14439@gmail.com"</span></div>
+      <div class="to">}</div>
+      <div style="margin-top:10px"><span class="tp">$ </span><span class="cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- SKILLS -->
+<section id="skills" class="reveal">
+  <div class="section-label"><span class="section-num">01 /</span> skill_stack</div>
+  <div class="skills-grid">
+    <div class="skill-item">
+      <div class="skill-name">C Language</div>
+      <div class="skill-lvl">● ● ● ●</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="80%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">C++</div>
+      <div class="skill-lvl">● ●</div>
+      <div class="skill-note">learning now</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="30%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Web Dev</div>
+      <div class="skill-lvl">● ● ● ●</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="75%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">AI Tools</div>
+      <div class="skill-lvl">● ● ● ● ●</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="95%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Vibe Coding</div>
+      <div class="skill-lvl">● ● ● ● ●</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="95%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">App Dev</div>
+      <div class="skill-lvl">●</div>
+      <div class="skill-note">just started</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="15%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">IoT Concepts</div>
+      <div class="skill-lvl">● ●</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="35%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-name">Problem Solving</div>
+      <div class="skill-lvl">● ● ●</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-width="60%"></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- WORK -->
+<section id="work" class="reveal">
+  <div class="section-label"><span class="section-num">02 /</span> work &amp; projects</div>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-num">01 — website</div>
+      <div class="project-name">AI-built Websites</div>
+      <div class="project-desc">Building real websites using AI as a co-pilot — from concept to deployed product, fast. Design, code, ship. Vibe coding at its finest.</div>
+      <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">AI</span><span class="tag">Vibe</span><span class="tag">Design</span></div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">02 — flagship idea</div>
+      <div class="project-name">GrehaNi Prototype</div>
+      <div class="project-desc">AI-based home assistant with voice control, IoT integration, and memory built for Indian families. Early stage — massive vision. See below.</div>
+      <div class="tags"><span class="tag">AI</span><span class="tag">IoT</span><span class="tag">Hardware</span><span class="tag">Voice</span></div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">03 — event</div>
+      <div class="project-name">CTF Workshop — ACC</div>
+      <div class="project-desc">Attended hands-on Cybersecurity & Capture The Flag session by Amity Coding Club. Explored real problem-solving beyond classroom theory.</div>
+      <div class="tags"><span class="tag">Amity</span><span class="tag">Workshop</span><span class="tag">CTF</span></div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">04 — in progress</div>
+      <div class="project-name">App Development</div>
+      <div class="project-desc">Actively learning mobile app development. Goal: ship GrehaNi and future ideas as real installable apps for real users.</div>
+      <div class="tags"><span class="tag">Learning</span><span class="tag">Mobile</span><span class="tag">2025</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- GREHANI -->
+<section id="grehani" class="reveal">
+  <div class="section-label"><span class="section-num">03 /</span> currently_building</div>
+  <div class="grehani-card">
+    <div class="wip-live">
+      <div class="wip-live-dot"></div>
+      <span class="wip-live-txt">active concept · seeking mentors &amp; collaborators</span>
+    </div>
+    <div class="grehani-title">GrehaNi</div>
+    <div class="grehani-sub">AI Home Assistant · Software + Hardware + IoT · Made for India</div>
+    <div class="grehani-desc">
+      A smart, human-connected home assistant designed for Indian families. GrehaNi helps with daily reminders, voice control for basic appliances, home safety, and interaction support for both students and elders — in multiple Indian languages. It's not just a device, it's a family member.
+    </div>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="feat-icon">🎙</div>
+        <div class="feat-name">Voice Assistant</div>
+        <div class="feat-desc">Natural conversation in multiple Indian languages with advanced listening</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🧠</div>
+        <div class="feat-name">Memory Based</div>
+        <div class="feat-desc">Remembers routines, preferences, and daily tasks for personalized help</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">⏰</div>
+        <div class="feat-name">Smart Reminders</div>
+        <div class="feat-desc">Context-aware notifications that adapt to your daily schedule</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🏠</div>
+        <div class="feat-name">Home Control</div>
+        <div class="feat-desc">Manages smart plugs, lights, and IoT-connected devices seamlessly</div>
+      </div>
+    </div>
+    <div class="tags">
+      <span class="tag">AI</span><span class="tag">IoT</span><span class="tag">Embedded</span><span class="tag">Voice</span><span class="tag">India</span><span class="tag">Hardware</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="grehani-progress"></div></div>
+      <div class="progress-label">
+        <span>concept → prototype → product</span>
+        <span class="progress-pct">20% — early stage</span>
+      </div>
+    </div>
+    <div class="grehani-cta">
+      <button class="btn-primary" onclick="copyEmail()">Collaborate on GrehaNi ↗</button>
+      <button class="btn-ghost" onclick="smoothTo('contact')">Mentor Me →</button>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- IDEAS -->
+<section id="ideas" class="reveal">
+  <div class="section-label"><span class="section-num">04 /</span> idea_log</div>
+  <ul class="ideas-list">
+    <li class="idea-item">
+      <span class="idea-num">001</span>
+      <div>
+        <div class="idea-title">GrehaNi — AI Home Assistant for Indian Families</div>
+        <div class="idea-desc">Voice-first, memory-based, IoT-connected home device. Designed for Indian homes — speaks your language, knows your family's routines, keeps everyone connected.</div>
+        <span class="idea-status status-active">actively building</span>
+      </div>
+    </li>
+    <li class="idea-item">
+      <span class="idea-num">002</span>
+      <div>
+        <div class="idea-title">AI-powered Student Toolkit</div>
+        <div class="idea-desc">A smart personal assistant for B.Tech students — assignment reminders, AI doubt solver, study planner, exam scheduler. Built by a student, for students who actually need it.</div>
+        <span class="idea-status status-concept">concept stage</span>
+      </div>
+    </li>
+    <li class="idea-item">
+      <span class="idea-num">003</span>
+      <div>
+        <div class="idea-title">Vibe-to-App Builder</div>
+        <div class="idea-desc">A no-friction tool where you describe your idea in plain language and AI generates a working app prototype. Ship in minutes, not months. The future of solo builders.</div>
+        <span class="idea-status status-concept">concept stage</span>
+      </div>
+    </li>
+    <li class="idea-item">
+      <span class="idea-num">004</span>
+      <div>
+        <div class="idea-title">More coming...</div>
+        <div class="idea-desc">New ideas drop every week. The best ones make it to the build queue. Stay tuned — or reach out and build something together.</div>
+        <span class="idea-status status-learning">always thinking</span>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<hr class="div">
+
+<!-- CONTACT -->
+<section id="contact" class="reveal">
+  <div class="section-label"><span class="section-num">05 /</span> contact</div>
+  <div class="contact-wrap">
+    <div class="contact-card">
+      <div class="contact-label">email</div>
+      <div class="contact-value"><a href="mailto:anand14439@gmail.com">anand14439@gmail.com</a></div>
+      <div class="contact-note">Best way to reach me. Response within 24h.</div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-label">location</div>
+      <div class="contact-value">Gwalior, MP, India</div>
+      <div class="contact-note">Open to remote collab anywhere.</div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-label">university</div>
+      <div class="contact-value">Amity University, Gwalior</div>
+      <div class="contact-note">B.Tech CSE · 2nd Semester · 2025</div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-label">looking for</div>
+      <div class="contact-value">Mentors &amp; Collabs</div>
+      <div class="contact-note">AI, IoT, embedded systems, app dev.</div>
+    </div>
+  </div>
+  <div class="contact-actions">
+    <button class="btn-primary" onclick="mailTo()">Send Email ↗</button>
+    <button class="btn-ghost" onclick="copyEmail()">Copy Email Address</button>
+    <button class="btn-ghost" onclick="openLinkedIn()">LinkedIn Profile →</button>
+  </div>
+</section>
+
+<footer>
+  <span>ANAND KUMAR · VIBE CODER · GWALIOR</span>
+  <span class="footer-red">© 2025</span>
+  <div class="footer-links">
+    <a href="mailto:anand14439@gmail.com">Email</a>
+    <a href="https://www.linkedin.com/in/anand-kumar-402686216/" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+// CUSTOM CURSOR
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+function animRing(){
+  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('a,button,.skill-item,.project-card,.contact-card,.idea-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cur.style.width='16px'; cur.style.height='16px';
+    ring.style.width='48px'; ring.style.height='48px'; ring.style.opacity='0.8';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cur.style.width='10px'; cur.style.height='10px';
+    ring.style.width='32px'; ring.style.height='32px'; ring.style.opacity='0.5';
+  });
+});
+
+// SMOOTH SCROLL
+function smoothTo(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// CONTACT ACTIONS
+function mailTo(){
+  window.location.href='mailto:anand14439@gmail.com?subject=Let\'s Connect — Saw Your Portfolio';
+}
+function copyEmail(){
+  navigator.clipboard.writeText('anand14439@gmail.com').then(()=>showToast('Email copied! ✓')).catch(()=>{
+    const t=document.createElement('textarea');
+    t.value='anand14439@gmail.com'; document.body.appendChild(t); t.select();
+    document.execCommand('copy'); document.body.removeChild(t);
+    showToast('Email copied! ✓');
+  });
+}
+function openLinkedIn(){
+  window.open('https://www.linkedin.com/in/anand-kumar-402686216/','_blank');
+}
+
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// SCROLL REVEAL
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');}
+  });
+},{threshold:0.1});
+reveals.forEach(r=>obs.observe(r));
+
+// SKILL BARS animate on scroll
+const bars=document.querySelectorAll('.skill-bar-fill');
+const barObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.width=e.target.dataset.width;
+      barObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.3});
+bars.forEach(b=>barObs.observe(b));
+
+// GREHANI PROGRESS animate on scroll
+const gp=document.getElementById('grehani-progress');
+const gpObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){gp.classList.add('animated'); gpObs.unobserve(e.target);}
+  });
+},{threshold:0.3});
+if(gp) gpObs.observe(gp);
+
+// ACTIVE NAV on scroll
+const sections=['about','skills','work','grehani','ideas','contact'];
+const navLinks=document.querySelectorAll('.nav-link');
+window.addEventListener('scroll',()=>{
+  let cur2='about';
+  sections.forEach(id=>{
+    const el=document.getElementById(id)||document.querySelector(`[id="${id}"]`)||document.querySelector('.hero');
+    if(el && window.scrollY>=el.offsetTop-120) cur2=id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active',a.getAttribute('href')==='#'+cur2);
+  });
+},{ passive:true });
+</script>
+</body>
+</html>
